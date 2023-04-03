@@ -1,6 +1,6 @@
 # BACKEND REST API (AUCTION)
 
-['See frontend source code']('https://github.com/Yooupy/rest-api-frontend')
+[See frontend source code](https://github.com/Yooupy/rest-api-frontend)
 
 This is a simple API for managing user accounts. It allows you to create new users, log in existing users, retrieve a list of all users, and perform other CRUD operations on individual users.
 
@@ -20,9 +20,9 @@ The API provides the following endpoints:
 - POST /: create a new user
 - POST /login: log in an existing user
 - GET /: retrieve a list of all users
-- GET /:id: retrieve a single user by ID
-- PATCH /:id: update a single user by ID
-- DELETE /:id: delete a single user by ID
+- GET /: id : retrieve a single user by ID
+- PATCH /: id : update a single user by ID
+- DELETE /: id : delete a single user by ID
 
 To use the API, send HTTP requests to the appropriate endpoint using a tool like cURL, Postman, or a web browser. For example, to create a new user, you could send a POST request to http://localhost:3000/ with a JSON payload containing the user's name, email, and password:
 
@@ -33,3 +33,7 @@ To use the API, send HTTP requests to the appropriate endpoint using a tool like
   "password": "secretpassword"
 }
 ```
+
+## Contributing
+
+If you find a bug or would like to contribute to this project, please open an issue or pull request on GitHub.
