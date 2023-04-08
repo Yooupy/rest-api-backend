@@ -5,7 +5,7 @@ const { Schema } = mongoose;
 const itemSchema = new Schema({
   name: String,
   description: String,
-  imgUrl: String,
+  imageUrl: String,
   startingBid: Number,
   currentBid: Number,
   bids: [

@@ -2,7 +2,8 @@ import express from "express";
 const router = express.Router();
 import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
-// import { CloudinaryStorage } from "multer-storage-cloudinary";
+import path from "path";
+import streamifier from "streamifier";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -10,10 +11,44 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
+const upload = multer({ storage: multer.memoryStorage() });
 
 import Item from "../models/itemSchema.js";
+
+// Add an item
+router.post("/", upload.single("image"), async (req, res) => {
+  try {
+    const result = await new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          upload_preset: process.env.CLOUDINARY_UPLOAD_PRESET,
+          resource_type: "image",
+        },
+        (error, result) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(result);
+          }
+        }
+      );
+
+      streamifier.createReadStream(req.file.buffer).pipe(uploadStream);
+    });
+    const item = new Item({
+      name: req.body.name,
+      description: req.body.description,
+      startingBid: req.body.startingBid,
+      imageUrl: result.secure_url,
+    });
+
+    await item.save();
+    res.status(201).send(item);
+  } catch (err) {
+    console.error(err);
+    res.status(400).send(err);
+  }
+});
 
 // Get all items
 router.get("/", async (req, res) => {
@@ -36,25 +71,6 @@ router.get("/:id", async (req, res) => {
     res.send(item);
   } catch (err) {
     res.status(500).send(err);
-  }
-});
-
-// Add an item
-router.post("/", upload.single("image"), async (req, res) => {
-  try {
-    const result = await cloudinary.uploader.upload(req.file.buffer, {
-      upload_preset: process.env.CLOUDINARY_UPLOAD_PRESET,
-    });
-    const item = new Item({
-      name: req.body.name,
-      description: req.body.description,
-      startingBid: req.body.startingBid,
-      imageUrl: result.secure_url,
-    });
-    await item.save();
-    res.status(201).send(item);
-  } catch (err) {
-    res.status(400).send(err);
   }
 });
 
