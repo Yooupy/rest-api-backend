@@ -2,7 +2,6 @@ import express from "express";
 const router = express.Router();
 import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
-import path from "path";
 import streamifier from "streamifier";
 
 cloudinary.config({

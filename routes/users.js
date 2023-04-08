@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 const router = express.Router();
 import userSchema from "../models/userSchema.js";
+import { auth } from "../verifyToken.js";
 import { registerValidation, loginValidation } from "../validation.js";
 
 dotenv.config();
@@ -91,7 +92,7 @@ router.get("/", async (req, res) => {
 });
 
 // Get a user by ID
-router.get("/:id", async (req, res) => {
+router.get("/:id", auth, async (req, res) => {
   const { id } = req.params;
   try {
     const user = await User.findById(id);
