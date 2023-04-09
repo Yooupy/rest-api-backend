@@ -34,12 +34,43 @@ router.post("/", upload.single("image"), async (req, res) => {
 
       streamifier.createReadStream(req.file.buffer).pipe(uploadStream);
     });
+    const categories = JSON.parse(req.body.categories);
     const item = new Item({
       name: req.body.name,
       description: req.body.description,
       startingBid: req.body.startingBid,
       imageUrl: result.secure_url,
+      categories: categories,
+      status: true, // default to open
+      counter: req.body.counter,
     });
+
+    const counter = item.counter * 3600; // convert hours to seconds
+    let remainingTime = counter;
+    let hours = Math.floor(remainingTime / 3600)
+      .toString()
+      .padStart(2, "0");
+    let minutes = Math.floor((remainingTime % 3600) / 60)
+      .toString()
+      .padStart(2, "0");
+    let seconds = (remainingTime % 60).toString().padStart(2, "0");
+
+    const timerId = setInterval(() => {
+      remainingTime--;
+      hours = Math.floor(remainingTime / 3600)
+        .toString()
+        .padStart(2, "0");
+      minutes = Math.floor((remainingTime % 3600) / 60)
+        .toString()
+        .padStart(2, "0");
+      seconds = (remainingTime % 60).toString().padStart(2, "0");
+
+      if (remainingTime <= 0) {
+        clearInterval(timerId);
+        item.status = false;
+        item.save();
+      }
+    }, 1000);
 
     await item.save();
     res.status(201).send(item);
