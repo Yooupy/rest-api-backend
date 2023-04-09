@@ -15,6 +15,19 @@ const itemSchema = new Schema({
       bidTime: Date,
     },
   ],
+  categories: {
+    type: [String],
+    enum: ["Art", "Books", "Electronics", "Fashion", "Home", "Antiques"],
+  },
+  status: {
+    type: Boolean,
+    default: true, // default status is open
+    required: true,
+  },
+  counter: {
+    type: Number,
+    required: true,
+  },
 });
 
 export default mongoose.model("Item", itemSchema);
