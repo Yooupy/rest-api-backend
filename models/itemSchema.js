@@ -24,8 +24,8 @@ const itemSchema = new Schema({
     default: true, // default status is open
     required: true,
   },
-  counter: {
-    type: Number,
+  expirationDate: {
+    type: Date,
     required: true,
   },
 });
